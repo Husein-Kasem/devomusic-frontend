@@ -1,0 +1,61 @@
+#!/usr/bin/env groovy
+
+pipeline {
+    agent any
+    
+       tools {
+        maven 'maven_3_6_0'
+        nodejs "node"
+        
+    }
+    stages {
+      
+
+          stage('Checkout from git') {
+              steps {
+               
+
+ 	   git (
+                url:'git@odyssey.devoteam.be:devomusic2019/frontend.git',
+                credentialsId:'0a00288c-4e9d-4a6c-94e8-4cae2e914506',
+                branch:'jenkins'
+              )
+            sh "ls -lat"
+        }
+    }
+        stage ('Install node modules') {
+            steps{
+                    sh 'npm install'   
+            }   
+        }
+        stage ('Start React App') {
+            steps {
+             
+                    sh 'npm start'
+                
+            }        
+        }
+      
+    }
+}
+/*
+def abortPreviousRunningBuilds() {
+  def hi = Hudson.instance
+  def pname = env.JOB_NAME.split('/')[0]
+
+  hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
+    def exec = build.getExecutor()
+
+    if (build.number != currentBuild.number && exec != null) {
+      exec.interrupt(
+        Result.ABORTED,
+        new CauseOfInterruption.UserInterruption(
+          "Aborted by #${currentBuild.number}"
+        )
+      )
+      println("Aborted previous running build #${build.number}")
+    } else {
+      println("Build is not running or is current build, not aborting - #${build.number}")
+    }
+  }
+}*/
